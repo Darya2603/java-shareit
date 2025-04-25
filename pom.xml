@@ -131,7 +131,7 @@
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
 							<artifactId>checkstyle</artifactId>
-							<version>10.3</version>
+							<version>10.12.3</version>
 						</dependency>
 
 					</dependencies>
@@ -235,7 +235,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>4.8.5</version>
+						<version>4.7.3.6</version>
 					</plugin>
 
 				</plugins>
@@ -245,7 +245,7 @@
 					<plugin>
 						<groupId>com.github.spotbugs</groupId>
 						<artifactId>spotbugs-maven-plugin</artifactId>
-						<version>4.8.5</version>
+						<version>4.7.3.6</version>
 					</plugin>
 				</plugins>
 			</reporting>
@@ -254,11 +254,6 @@
 			<id>coverage</id>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.12</version>
-					</plugin>
 
 				</plugins>
 			</build>
