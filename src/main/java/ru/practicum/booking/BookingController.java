@@ -1,6 +1,6 @@
 package ru.practicum.booking;
 
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDto createBooking(@Valid @RequestBody BookingDto bookingDto,
+    public BookingDto createBooking( @Positive @RequestBody BookingDto bookingDto,
                                     @RequestHeader("X-User-Id") Long userId) {
         log.info("Получен запрос на создание бронирования от пользователя {}", userId);
         return bookingService.createBooking(bookingDto, userId);

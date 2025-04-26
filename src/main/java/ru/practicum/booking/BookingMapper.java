@@ -1,10 +1,14 @@
 package ru.practicum.booking;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.item.ItemMapper;
 import ru.practicum.user.UserMapper;
 
+@Getter
+@Setter
 @Component
 public class BookingMapper {
     private final ItemMapper itemMapper;

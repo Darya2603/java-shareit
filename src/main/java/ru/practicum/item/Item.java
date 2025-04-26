@@ -3,12 +3,13 @@ package ru.practicum.item;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.request.ItemRequest;
 import ru.practicum.user.User;
 
-@Data
-@Entity
+@Setter
+@Getter
 @Table(name = "items")
 public class Item {
     @Id
