@@ -23,7 +23,7 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingDto createBooking( @Positive @RequestBody BookingDto bookingDto,
+    public BookingDto createBooking(@Positive @RequestBody BookingDto bookingDto,
                                     @RequestHeader("X-User-Id") Long userId) {
         log.info("Получен запрос на создание бронирования от пользователя {}", userId);
         return bookingService.createBooking(bookingDto, userId);
