@@ -16,13 +16,10 @@ import java.util.List;
 public class ItemDtoBookingsAndComments {
 
     private Long id;
-
     @NotBlank
     private String name;
-
     @NotBlank
     private String description;
-
     @NotNull
     private Boolean available;
 

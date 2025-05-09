@@ -13,17 +13,16 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    // Используем Long для ключа в Map
     private Map<Long, User> userStorage = new HashMap<>();
-    private long userId = 0L; // Используем long для userId
+    private long userId = 0L;
 
     @Override
     public UserDto addUser(User user) {
         if (isUserDuplicated(user.getEmail())) {
             throw new DuplicateEmailException("Пользователь с такой почтой уже существует.");
         }
-        user.setId(generateNewId()); // Используем Long для ID
-        userStorage.put(user.getId(), user); // Сохраняем в Map с Long ключом
+        user.setId(generateNewId());
+        userStorage.put(user.getId(), user);
         return UserMapper.toUserDto(user);
     }
 
@@ -69,7 +68,6 @@ public class InMemoryUserStorage implements UserStorage {
         return userStorage;
     }
 
-    // Обновленный метод для генерации нового ID (Long)
     private long generateNewId() {
         return ++userId;
     }
