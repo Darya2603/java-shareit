@@ -40,11 +40,11 @@ public class BookingServiceImpl implements BookingService {
         Booking existedBooking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
 
-        if (existedBooking.getBooker().getId().equals(ownerId)) {
+        if (Objects.equals(existedBooking.getBooker().getId(), ownerId)) {
             throw new UserNotFoundException("Наглый букер. Ты не сможешь обыграть мою систему)");
         }
 
-        if (!existedBooking.getItem().getOwner().getId().equals(ownerId)) {
+        if (!Objects.equals(existedBooking.getItem().getOwner().getId(), ownerId)) {
             throw new IncorrectUserException("Указанный пользователь не имеет прав изменять статус бронирования");
         }
 
@@ -52,14 +52,11 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Заявка на бронирование уже одобрена");
         }
 
-        if (isApproved) {
-            existedBooking.setStatus(BookingStatus.APPROVED);
-        } else {
-            existedBooking.setStatus(BookingStatus.REJECTED);
-        }
+        existedBooking.setStatus(isApproved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
 
         return BookingMapper.toResponseBookingDto(bookingRepository.save(existedBooking));
     }
+
 
     @Override
     public ResponseBookingDto getBookingById(Long requesterId, Long bookingId) {

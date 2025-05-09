@@ -1,5 +1,6 @@
 package ru.practicum.comment;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.item.Item;
 import ru.practicum.user.User;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {

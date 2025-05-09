@@ -1,9 +1,11 @@
 package ru.practicum.item;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.user.User;
 
 import java.util.*;
 
+@Component
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
