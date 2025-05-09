@@ -1,54 +1,35 @@
 package ru.practicum.booking;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
-@Repository
-public class BookingRepository {
-    private final Map<Long, Booking> bookings = new HashMap<>();
-    private final AtomicLong idCounter = new AtomicLong();
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    public Booking save(Booking booking) {
-        if (booking.getId() == null) {
-            booking.setId(idCounter.incrementAndGet());
-        }
-        bookings.put(booking.getId(), booking);
-        return booking;
-    }
+    List<Booking> findAllByBookerIdOrderByStartDesc(int userId);
 
-    public Booking findById(Long id) {
-        return bookings.get(id);
-    }
+    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(int userId, LocalDateTime now, LocalDateTime now1);
 
-    public List<Booking> findAll() {
-        return new ArrayList<>(bookings.values());
-    }
+    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(int userId, LocalDateTime now);
 
-    public void deleteById(Long id) {
-        bookings.remove(id);
-    }
+    List<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(int userId, LocalDateTime now);
 
-    public List<Booking> findByItemId(Long itemId) {
-        return bookings.values().stream()
-                .filter(b -> itemId.equals(b.getItem().getId()))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(int userId, BookingStatus bookingStatus);
 
-    public List<Booking> findByBookerId(Long bookerId) {
-        return bookings.values().stream()
-                .filter(b -> b.getBooker().getId().equals(bookerId))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByItemOwnerIdOrderByStartDesc(int ownerId);
 
-    public List<Booking> findByStatus(BookingStatus status) {
-        return bookings.values().stream()
-                .filter(b -> b.getStatus().equals(status))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(int ownerId, LocalDateTime now, LocalDateTime now1);
+
+    List<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(int userId, LocalDateTime now);
+
+    List<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(int userId, LocalDateTime now);
+
+    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(int userId, BookingStatus bookingStatus);
+
+    List<Booking> findAllByItemIdAndStatusNotOrderByStartAsc(int itemId, BookingStatus bookingStatus);
+
+    List<Booking> findAllByItemIdAndBookerIdAndEndBefore(int itemId, int bookerId, LocalDateTime now);
 }
+
+

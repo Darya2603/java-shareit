@@ -1,87 +1,61 @@
 package ru.practicum.user;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.UserNotFoundException;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
+    private final UserRepository repository;
+
+    @Override
+    public UserDto addUser(User user) {
+        return UserMapper.toUserDto(repository.save(user));
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        validateUserUniqueness(userDto.getName(), userDto.getEmail());
-
-        if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("Email не может быть пустым");
+    public UserDto updateUser(User user, int userId) {
+        User existedUser = repository.findById(userId).get();
+        if (user.getName() != null) {
+            existedUser.setName(user.getName());
         }
-
-        if (userDto.getName() == null || userDto.getName().isEmpty()) {
-            userDto.setName(userDto.getEmail());
+        if (user.getEmail() != null) {
+            existedUser.setEmail(user.getEmail());
         }
-
-        User user = userMapper.toEntity(userDto);
-        User savedUser = userRepository.save(user);
-        return userMapper.toUserDto(savedUser);
+        return UserMapper.toUserDto(repository.save(existedUser));
     }
 
     @Override
-    public UserDto updateUser(Long id, UserDto userDto) {
-        User user = userRepository.findById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-
-        if (!Objects.equals(user.getName(), userDto.getName()) ||
-                !Objects.equals(user.getEmail(), userDto.getEmail())) {
-            validateUserUniqueness(userDto.getName(), userDto.getEmail());
-        }
-
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        User updatedUser = userRepository.save(user);
-        return userMapper.toUserDto(updatedUser);
-    }
-
-    @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(int userId) {
+        repository.deleteById(userId);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::toUserDto)
+        return repository.findAll().stream()
+                .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDto getUserById(Long userId) {
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            throw new NotFoundException("Пользователь не найден");
+    public UserDto getUserById(int userId) {
+        Optional<User> userOpt = repository.findById(userId);
+        if (userOpt.isPresent()) {
+            return UserMapper.toUserDto(userOpt.get());
+        } else {
+            throw new UserNotFoundException("Такого пользователя не существует");
         }
-        return userMapper.toUserDto(user);
     }
 
-    private void validateUserUniqueness(String name, String email) {
-        if (userRepository.existsByName(name)) {
-            throw new ConflictException("Name уже используется");
-        }
-
-        if (userRepository.existsByEmail(email)) {
-            throw new ConflictException("Email уже используется");
-        }
+    @Override
+    public Map<Integer, User> getUserMap() {
+        return null;
     }
 }

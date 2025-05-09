@@ -1,20 +1,16 @@
 package ru.practicum.booking;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingService {
-    BookingDto createBooking(BookingDto bookingDto, Long userId);
 
-    BookingDto getBookingById(Long bookingId);
+    ResponseBookingDto addBooking(BookingDto bookingDto, int bookerId);
 
-    List<BookingDto> getUserBookings(Long userId);
+    ResponseBookingDto patchBooking(int ownerId, int bookingId, boolean isApproved);
 
-    List<BookingDto> getItemBookings(Long itemId);
+    ResponseBookingDto getBookingById(int requesterId, int bookingId);
 
-    BookingDto updateBookingStatus(Long bookingId, BookingStatus newStatus);
+    List<ResponseBookingDto> getAllUsersBookings(int usersId, BookingState state);
 
-    void cancelBooking(Long bookingId);
-
-    boolean checkDateOverlap(LocalDateTime start, LocalDateTime end, Long itemId);
+    List<ResponseBookingDto> getAllItemOwnerBookings(int ownerId, BookingState state);
 }

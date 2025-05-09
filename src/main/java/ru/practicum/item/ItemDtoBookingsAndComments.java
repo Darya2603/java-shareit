@@ -5,11 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import ru.practicum.booking.ShortBookingDto;
+import ru.practicum.comment.CommentDto;
+
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class ItemDto {
+public class ItemDtoBookingsAndComments {
 
     private Integer id;
 
@@ -22,6 +26,13 @@ public class ItemDto {
     @NotNull
     private Boolean available;
 
-    int ownerId;
-    private Integer request;
+    private ShortBookingDto lastBooking;
+
+    private ShortBookingDto nextBooking;
+
+    private List<CommentDto> comments;
+
+    public ItemDtoBookingsAndComments() {
+
+    }
 }

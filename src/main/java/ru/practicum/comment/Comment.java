@@ -1,4 +1,4 @@
-package ru.practicum.booking;
+package ru.practicum.comment;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,29 +7,28 @@ import ru.practicum.user.User;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "bookings")
 @AllArgsConstructor
+@Entity
 @Getter
 @Setter
-public class Booking {
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "start_date")
-    private LocalDateTime start;
-    @Column(name = "end_date")
-    private LocalDateTime end;
+    @Column(name = "text", nullable = false)
+    private String text;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booker_id", nullable = false)
-    private User booker;
-    @Enumerated(EnumType.STRING)
-    private BookingStatus status;
+    @JoinColumn(name = "author_id", nullable = false)
+    private User author;
+    @JoinColumn(name = "created", nullable = false)
+    private LocalDateTime created;
 
-    public Booking() {
+    public Comment() {
 
     }
 }
+

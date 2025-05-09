@@ -1,14 +1,14 @@
 package ru.practicum.user;
 
-import jakarta.validation.constraints.Email;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class UserDto {
-    private Long id;
+    private Integer id;
     private String name;
-
-    @Email
     private String email;
-    private String password;
 }

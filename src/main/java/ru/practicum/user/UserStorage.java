@@ -3,7 +3,7 @@ package ru.practicum.user;
 import java.util.List;
 import java.util.Map;
 
-public interface UserService {
+public interface UserStorage {
 
     UserDto addUser(User user);
 
