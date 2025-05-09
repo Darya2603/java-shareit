@@ -13,8 +13,8 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.isAvailable(),
-                item.getOwner().getId(),
-                item.getRequest() != null ? item.getRequest().getId() : null
+                item.getOwner() != null ? item.getOwner().getId().intValue() : 0,
+                item.getRequest() != null ? item.getRequest().getId().intValue() : null
         );
     }
 

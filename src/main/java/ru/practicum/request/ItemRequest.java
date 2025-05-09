@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    private Long id;
     @Column(name = "description", nullable = false)
-    String description;
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id")
-    User requester;
-    LocalDateTime created;
+    private User requester;
+    private LocalDateTime created;
 }
