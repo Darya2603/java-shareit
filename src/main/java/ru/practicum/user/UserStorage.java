@@ -7,14 +7,14 @@ public interface UserStorage {
 
     UserDto addUser(User user);
 
-    UserDto updateUser(User user, int userId);
+    UserDto updateUser(User user, Long userId);
 
-    void deleteUser(int userId);
+    void deleteUser(Long userId);
 
     List<UserDto> getAllUsers();
 
-    UserDto getUserById(int userId);
+    UserDto getUserById(Long userId);
 
-    Map<Integer, User> getUserMap();
+    Map<Long, User> getUserMap();
 
 }

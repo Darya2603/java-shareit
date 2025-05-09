@@ -9,8 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ShortBookingDto {
 
-    private int id;
-    private int bookerId;
+    private Long id;
+    private Long bookerId;
 
     public ShortBookingDto() {
 

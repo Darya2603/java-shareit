@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemDtoBookingsAndComments {
 
-    private Integer id;
+    private Long id;
 
     @NotBlank
     private String name;

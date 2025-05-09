@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(User user, int userId) {
+    public UserDto updateUser(User user, Long userId) {
         User existedUser = repository.findById(userId).get();
         if (user.getName() != null) {
             existedUser.setName(user.getName());
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUser(Long userId) {
         repository.deleteById(userId);
     }
 
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserById(int userId) {
+    public UserDto getUserById(Long userId) {
         Optional<User> userOpt = repository.findById(userId);
         if (userOpt.isPresent()) {
             return UserMapper.toUserDto(userOpt.get());
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<Integer, User> getUserMap() {
+    public Map<Long, User> getUserMap() {
         return null;
     }
 }

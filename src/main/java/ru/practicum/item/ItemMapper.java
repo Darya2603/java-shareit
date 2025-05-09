@@ -4,7 +4,6 @@ import ru.practicum.user.User;
 
 import java.util.*;
 
-
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
@@ -13,8 +12,8 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.isAvailable(),
-                item.getOwner() != null ? item.getOwner().getId().intValue() : 0,
-                item.getRequest() != null ? item.getRequest().getId().intValue() : null
+                item.getOwner().getId(),
+                item.getRequest() != null ? item.getRequest().getId() : null
         );
     }
 

@@ -37,7 +37,7 @@ public class ItemRequestRepository {
     public List<ItemRequest> findByRequestor(User requestor) {
         return requests.values()
                 .stream()
-                .filter(r -> r.getRequestor().equals(requestor))
+                .filter(r -> r.getRequester().equals(requestor))
                 .toList();
     }
 

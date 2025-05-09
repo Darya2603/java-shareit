@@ -6,9 +6,11 @@ import ru.practicum.user.User;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "requests")
+@AllArgsConstructor
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +21,9 @@ public class ItemRequest {
     @JoinColumn(name = "requester_id")
     private User requester;
     private LocalDateTime created;
+
+    public ItemRequest() {
+    }
 }
+
+

@@ -13,7 +13,7 @@ import ru.practicum.user.User;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "description", nullable = false)
@@ -26,7 +26,7 @@ public class Item {
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 
-    public Item(Integer id, String name, String description, boolean available, User owner) {
+    public Item(Long id, String name, String description, boolean available, User owner) {
         this.id = id;
         this.name = name;
         this.description = description;

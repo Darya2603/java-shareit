@@ -1,5 +1,6 @@
 package ru.practicum.booking;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.item.Item;
 import ru.practicum.item.ItemMapper;
 import ru.practicum.user.User;
@@ -8,27 +9,17 @@ import ru.practicum.user.UserMapper;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BookingMapper {
 
-    public static BookingDto toBookingDto(Booking booking) {
-        return new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItem().getId(),
-                booking.getBooker().getId(),
-                booking.getStatus() != null ? booking.getStatus() : BookingStatus.WAITING
-        );
-    }
-
-    public static Booking toBooking(BookingDto bookingDto, Item item, User booker) {
+    public static Booking toBooking(BookingDto dto, Item item, User booker) {
         return new Booking(
-                bookingDto.getId(),
-                bookingDto.getStart(),
-                bookingDto.getEnd(),
+                dto.getId() != null ? dto.getId().longValue() : null,
+                dto.getStart(),
+                dto.getEnd(),
                 item,
                 booker,
-                bookingDto.getStatus() != null ? bookingDto.getStatus() : BookingStatus.WAITING
+                BookingStatus.WAITING
         );
     }
 
@@ -44,10 +35,10 @@ public class BookingMapper {
     }
 
     public static List<ResponseBookingDto> listToResponseBookingDto(Iterable<Booking> bookings) {
-        List<ResponseBookingDto> dtos = new ArrayList<>();
-        for (Booking booking : bookings) {
-            dtos.add(toResponseBookingDto(booking));
+        List<ResponseBookingDto> result = new ArrayList<>();
+        for (Booking b : bookings) {
+            result.add(toResponseBookingDto(b));
         }
-        return dtos;
+        return result;
     }
 }

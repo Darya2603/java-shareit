@@ -13,21 +13,22 @@ import java.util.stream.Collectors;
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private Map<Integer,User> userStorage = new HashMap<>();
-    private int userId = 0;
+    // Используем Long для ключа в Map
+    private Map<Long, User> userStorage = new HashMap<>();
+    private long userId = 0L; // Используем long для userId
 
     @Override
     public UserDto addUser(User user) {
         if (isUserDuplicated(user.getEmail())) {
             throw new DuplicateEmailException("Пользователь с такой почтой уже существует.");
         }
-        user.setId(generateNewId());
-        userStorage.put(user.getId(), user);
+        user.setId(generateNewId()); // Используем Long для ID
+        userStorage.put(user.getId(), user); // Сохраняем в Map с Long ключом
         return UserMapper.toUserDto(user);
     }
 
     @Override
-    public UserDto updateUser(User user, int userId) {
+    public UserDto updateUser(User user, Long userId) {
         User existedUser = userStorage.get(userId);
         if (user.getEmail() != null && !user.getEmail().contains("@")) {
             throw new ValidationException("Введен неверный адрес электронной почты.");
@@ -46,31 +47,30 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUser(Long userId) {
         userStorage.remove(userId);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         List<User> allUsers = new ArrayList<>(userStorage.values());
-        List<UserDto> allUsersDto = allUsers
-                .stream()
+        return allUsers.stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
-        return allUsersDto;
     }
 
     @Override
-    public UserDto getUserById(int userId) {
+    public UserDto getUserById(Long userId) {
         return UserMapper.toUserDto(userStorage.get(userId));
     }
 
     @Override
-    public Map<Integer, User> getUserMap() {
+    public Map<Long, User> getUserMap() {
         return userStorage;
     }
 
-    private int generateNewId() {
+    // Обновленный метод для генерации нового ID (Long)
+    private long generateNewId() {
         return ++userId;
     }
 
@@ -81,4 +81,5 @@ public class InMemoryUserStorage implements UserStorage {
         return duplicatedUser.isPresent();
     }
 }
+
 

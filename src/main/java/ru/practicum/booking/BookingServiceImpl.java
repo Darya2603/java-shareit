@@ -21,7 +21,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public ResponseBookingDto addBooking(BookingDto bookingDto, int bookerId) {
+    public ResponseBookingDto addBooking(BookingDto bookingDto, Long bookerId) {
         User booker = userRepository.findById(bookerId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new ItemNotFoundException("Указанной вещи не существует"));
         if (Objects.equals(booker.getId(), item.getOwner().getId())) {
@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResponseBookingDto patchBooking(int ownerId, int bookingId, boolean isApproved) {
+    public ResponseBookingDto patchBooking(Long ownerId, Long bookingId, boolean isApproved) {
         Booking existedBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
         if (existedBooking.getBooker().getId() == ownerId) {
             throw new UserNotFoundException("Наглый букер. Ты не сможешь обыграть мою систему)");
@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public ResponseBookingDto getBookingById(int requesterId, int bookingId) {
+    public ResponseBookingDto getBookingById(Long requesterId, Long bookingId) {
         Booking existedBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
         Item item = existedBooking.getItem();
         if (existedBooking.getBooker().getId() != requesterId && item.getOwner().getId() != requesterId) {
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<ResponseBookingDto> getAllUsersBookings(int usersId, BookingState state) {
+    public List<ResponseBookingDto> getAllUsersBookings(Long usersId, BookingState state) {
         User booker = userRepository.findById(usersId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
         switch (state) {
             case ALL:
@@ -87,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<ResponseBookingDto> getAllItemOwnerBookings(int ownerId, BookingState state) {
+    public List<ResponseBookingDto> getAllItemOwnerBookings(Long ownerId, BookingState state) {
         User booker = userRepository.findById(ownerId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
         switch (state) {
             case ALL:

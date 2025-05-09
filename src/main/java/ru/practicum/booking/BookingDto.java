@@ -8,15 +8,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookingDto {
 
-    private int id;
+    private Long id;
     @NotNull
     private LocalDateTime start;
     @NotNull
     private LocalDateTime end;
     @NotNull
-    private Integer itemId;
-    private Integer bookerId;
+    private Long itemId;
+    private Long bookerId;
     private BookingStatus status;
 }

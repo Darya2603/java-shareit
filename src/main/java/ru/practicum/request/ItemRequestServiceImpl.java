@@ -1,6 +1,7 @@
 package ru.practicum.request;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.User;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Component
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
@@ -42,10 +44,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getRequestsByUserId(Long userId) {
-        User requestor = userRepository.findById(userId);
-        if (requestor == null) {
-            throw new NotFoundException("Пользователь не найден");
-        }
+        User requestor = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден")); // Извлекаем пользователя из Optional
         return itemRequestRepository.findByRequestor(requestor)
                 .stream()
                 .map(itemRequestMapper::toRequestDto)
