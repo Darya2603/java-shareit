@@ -37,31 +37,41 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseBookingDto patchBooking(Long ownerId, Long bookingId, boolean isApproved) {
-        Booking existedBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
-        if (existedBooking.getBooker().getId() == ownerId) {
+        Booking existedBooking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
+
+        if (existedBooking.getBooker().getId().equals(ownerId)) {
             throw new UserNotFoundException("Наглый букер. Ты не сможешь обыграть мою систему)");
         }
-        if (existedBooking.getItem().getOwner().getId() != ownerId) {
+
+        if (!existedBooking.getItem().getOwner().getId().equals(ownerId)) {
             throw new IncorrectUserException("Указанный пользователь не имеет прав изменять статус бронирования");
         }
+
         if (existedBooking.getStatus().equals(BookingStatus.APPROVED)) {
             throw new ValidationException("Заявка на бронирование уже одобрена");
         }
+
         if (isApproved) {
             existedBooking.setStatus(BookingStatus.APPROVED);
         } else {
             existedBooking.setStatus(BookingStatus.REJECTED);
         }
+
         return BookingMapper.toResponseBookingDto(bookingRepository.save(existedBooking));
     }
 
     @Override
     public ResponseBookingDto getBookingById(Long requesterId, Long bookingId) {
-        Booking existedBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
+        Booking existedBooking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
+
         Item item = existedBooking.getItem();
-        if (existedBooking.getBooker().getId() != requesterId && item.getOwner().getId() != requesterId) {
+
+        if (!existedBooking.getBooker().getId().equals(requesterId) && !item.getOwner().getId().equals(requesterId)) {
             throw new NotOwnerAndNotBookerException("Указанный пользователь не владелец вещи и не арендатор");
         }
+
         return BookingMapper.toResponseBookingDto(existedBooking);
     }
 
