@@ -22,10 +22,12 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public ResponseBookingDto addBooking(BookingDto bookingDto, Long bookerId) {
-        User booker = userRepository.findById(bookerId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new ItemNotFoundException("Указанной вещи не существует"));
+        User booker = userRepository.findById(bookerId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + bookerId + " не найден"));
+        Item item = itemRepository.findById(bookingDto.getItemId())
+                .orElseThrow(() -> new NotFoundException("Вещь с id=" + bookingDto.getItemId() + " не найдена"));
         if (Objects.equals(booker.getId(), item.getOwner().getId())) {
-            throw new BookingNotFoundException("Пользователю нет необходимости бронировать свою вещь");
+            throw new NotFoundException("Пользователю нет необходимости бронировать свою вещь");
         }
         if (!item.isAvailable()) {
             throw new ItemIsNotAvailableException("Вещь уже забронирована");
@@ -38,10 +40,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public ResponseBookingDto patchBooking(Long ownerId, Long bookingId, boolean isApproved) {
         Booking existedBooking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
+                .orElseThrow(() -> new NotFoundException("Бронирование с id=" + bookingId + " не найдено"));
 
         if (Objects.equals(existedBooking.getBooker().getId(), ownerId)) {
-            throw new UserNotFoundException("Наглый букер. Ты не сможешь обыграть мою систему)");
+            throw new NotFoundException("Наглый букер. Ты не сможешь обыграть мою систему)");
         }
 
         if (!Objects.equals(existedBooking.getItem().getOwner().getId(), ownerId)) {
@@ -57,15 +59,15 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toResponseBookingDto(bookingRepository.save(existedBooking));
     }
 
-
     @Override
     public ResponseBookingDto getBookingById(Long requesterId, Long bookingId) {
         Booking existedBooking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new BookingNotFoundException("Такого бронирования не существует"));
+                .orElseThrow(() -> new NotFoundException("Бронирование с id=" + bookingId + " не найдено"));
 
         Item item = existedBooking.getItem();
 
-        if (!existedBooking.getBooker().getId().equals(requesterId) && !item.getOwner().getId().equals(requesterId)) {
+        if (!existedBooking.getBooker().getId().equals(requesterId) &&
+                !item.getOwner().getId().equals(requesterId)) {
             throw new NotOwnerAndNotBookerException("Указанный пользователь не владелец вещи и не арендатор");
         }
 
@@ -74,20 +76,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDto> getAllUsersBookings(Long usersId, BookingState state) {
-        User booker = userRepository.findById(usersId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
+        userRepository.findById(usersId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + usersId + " не найден"));
+
         switch (state) {
             case ALL:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdOrderByStartDesc(usersId));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdOrderByStartDesc(usersId));
             case CURRENT:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(usersId, LocalDateTime.now(), LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(
+                                usersId, LocalDateTime.now(), LocalDateTime.now()));
             case PAST:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(usersId, LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(usersId, LocalDateTime.now()));
             case FUTURE:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(usersId, LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(usersId, LocalDateTime.now()));
             case WAITING:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(usersId, BookingStatus.WAITING));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(usersId, BookingStatus.WAITING));
             case REJECTED:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(usersId, BookingStatus.REJECTED));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(usersId, BookingStatus.REJECTED));
             default:
                 throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
@@ -95,21 +106,31 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDto> getAllItemOwnerBookings(Long ownerId, BookingState state) {
-        User booker = userRepository.findById(ownerId).orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
+        userRepository.findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + ownerId + " не найден"));
+
         switch (state) {
             case ALL:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId));
             case CURRENT:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(ownerId, LocalDateTime.now(), LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
+                                ownerId, LocalDateTime.now(), LocalDateTime.now()));
             case PAST:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()));
             case FUTURE:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now()));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now()));
             case WAITING:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING));
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING));
             case REJECTED:
-                return BookingMapper.listToResponseBookingDto(bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED));
-            default: throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
+                return BookingMapper.listToResponseBookingDto(
+                        bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED));
+            default:
+                throw new UnsupportedStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 
@@ -128,3 +149,4 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 }
+

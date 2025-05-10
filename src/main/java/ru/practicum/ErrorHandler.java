@@ -28,19 +28,17 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentTypeMismatchException(final MethodArgumentTypeMismatchException e) {
-        Class<?> type = e.getRequiredType();
-        String message;
-        if (type.isEnum()) {
-            message = "Unknown state: UNSUPPORTED_STATUS";
-            return new ErrorResponse(message);
-        } else {
-            return new ErrorResponse(e.getMessage());
-        }
+        // Получаем название типа аргумента, который вызвал ошибку
+        String name = e.getName();
+        String message = "Invalid argument for parameter: " + name;
+
+        log.error(message, e);
+        return new ErrorResponse(message);
     }
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class, NotOwnerAndNotBookerException.class})
+    @ExceptionHandler({NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final RuntimeException e) {
+    public ErrorResponse handleNotFoundException(final NotFoundException e) {
         log.error(e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
@@ -72,3 +70,4 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 }
+

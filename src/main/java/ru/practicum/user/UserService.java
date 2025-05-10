@@ -1,20 +1,17 @@
 package ru.practicum.user;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserService {
 
-    UserDto addUser(User user);
+    UserDto addUser(UserDto userDto);
 
-    UserDto updateUser(User user, Long userId);
+    UserDto updateUser(UserDto userDto, Long userId);
 
     void deleteUser(Long userId);
 
     List<UserDto> getAllUsers();
 
     UserDto getUserById(Long userId);
-
-    Map<Long, User> getUserMap();
-
 }
+

@@ -16,21 +16,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto addUser(@RequestBody @Valid User user) {
+    public UserDto addUser(@RequestBody @Valid UserDto userDto) {
         log.info("Получен запрос POST /users");
-        UserValidator.validate(user);
-        return userService.addUser(user);
+        return userService.addUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto patchUser(@RequestBody User user, @PathVariable Long userId) {
-        log.info("Получен запрос PATCH /users/{userId}");
-        return userService.updateUser(user, userId);
+    public UserDto patchUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
+        log.info("Получен запрос PATCH /users/{}", userId);
+        return userService.updateUser(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        log.info("Получен запрос DELETE /users/{userId}");
+        log.info("Получен запрос DELETE /users/{}", userId);
         userService.deleteUser(userId);
     }
 
@@ -42,7 +41,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable Long userId) {
-        log.info("Получен запрос GET /users/{userId}");
+        log.info("Получен запрос GET /users/{}", userId);
         return userService.getUserById(userId);
     }
 }

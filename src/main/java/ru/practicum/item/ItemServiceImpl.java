@@ -1,5 +1,6 @@
 package ru.practicum.item;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +25,10 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
+    @Transactional
     public ItemDto addItem(ItemDto itemDto, Long ownerId) {
         User user = userRepository.findById(ownerId)
-                .orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + ownerId + " не найден"));
         Item item = ItemMapper.toItem(itemDto, user);
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
@@ -34,7 +36,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long itemId, Long ownerId) {
         Item existedItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Указанной вещи не существует"));
+                .orElseThrow(() -> new NotFoundException("Вещь с id=" + itemId + " не найдена"));
         if (!existedItem.getOwner().getId().equals(ownerId)) {
             throw new IncorrectUserException("Неверный владелец");
         }
@@ -46,9 +48,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDtoBookingsAndComments getItemById(Long ownerId, Long itemId) {
         Item existedItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Указанной вещи не существует"));
+                .orElseThrow(() -> new NotFoundException("Вещь с id=" + itemId + " не найдена"));
 
         List<Booking> itemBookings = bookingRepository
                 .findAllByItemIdAndStatusNotOrderByStartAsc(existedItem.getId(), BookingStatus.REJECTED);
@@ -136,8 +139,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        List<Item> searchedItems = itemRepository
-                .findAllByNameContainingIgnoreCaseAndAvailableTrueOrDescriptionContainingIgnoreCaseAndAvailableTrue(text, text);
+        List<Item> searchedItems = itemRepository.searchAvailableItems(text);
         return ItemMapper.listToItemDto(searchedItems);
     }
 
@@ -147,9 +149,9 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Отсутствует текст в комментарии");
         }
         User user = userRepository.findById(authorId)
-                .orElseThrow(() -> new UserNotFoundException("Указанного пользователя не существует"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + authorId + " не найден"));
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Указанной вещи не существует"));
+                .orElseThrow(() -> new NotFoundException("Вещь с id=" + itemId + " не найдена"));
 
         List<Booking> bookingList = bookingRepository
                 .findAllByItemIdAndBookerIdAndEndBefore(itemId, authorId, LocalDateTime.now());
@@ -162,6 +164,7 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 }
+
 
 
 
