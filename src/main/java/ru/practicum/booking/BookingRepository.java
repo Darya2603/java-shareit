@@ -1,54 +1,34 @@
 package ru.practicum.booking;
 
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
-@Repository
-public class BookingRepository {
-    private final Map<Long, Booking> bookings = new HashMap<>();
-    private final AtomicLong idCounter = new AtomicLong();
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    public Booking save(Booking booking) {
-        if (booking.getId() == null) {
-            booking.setId(idCounter.incrementAndGet());
-        }
-        bookings.put(booking.getId(), booking);
-        return booking;
-    }
+    List<Booking> findAllByBookerIdOrderByStartDesc(Long userId);  // Изменен на Long
 
-    public Booking findById(Long id) {
-        return bookings.get(id);
-    }
+    List<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByIdAsc(Long userId, LocalDateTime now, LocalDateTime now1);  // Изменен на Long
 
-    public List<Booking> findAll() {
-        return new ArrayList<>(bookings.values());
-    }
+    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime now);  // Изменен на Long
 
-    public void deleteById(Long id) {
-        bookings.remove(id);
-    }
+    List<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime now);  // Изменен на Long
 
-    public List<Booking> findByItemId(Long itemId) {
-        return bookings.values().stream()
-                .filter(b -> itemId.equals(b.getItem().getId()))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long userId, BookingStatus bookingStatus);  // Изменен на Long
 
-    public List<Booking> findByBookerId(Long bookerId) {
-        return bookings.values().stream()
-                .filter(b -> b.getBooker().getId().equals(bookerId))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByItemOwnerIdOrderByStartDesc(Long ownerId);  // Изменен на Long
 
-    public List<Booking> findByStatus(BookingStatus status) {
-        return bookings.values().stream()
-                .filter(b -> b.getStatus().equals(status))
-                .collect(Collectors.toList());
-    }
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(Long ownerId, LocalDateTime now, LocalDateTime now1);  // Изменен на Long
+
+    List<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(Long userId, LocalDateTime now);  // Изменен на Long
+
+    List<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(Long userId, LocalDateTime now);  // Изменен на Long
+
+    List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(Long userId, BookingStatus bookingStatus);  // Изменен на Long
+
+    List<Booking> findAllByItemIdAndStatusNotOrderByStartAsc(Long itemId, BookingStatus bookingStatus);  // Изменен на Long
+
+    List<Booking> findAllByItemIdAndBookerIdAndEndBefore(Long itemId, Long bookerId, LocalDateTime now);  // Изменен на Long
 }
+
+

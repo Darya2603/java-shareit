@@ -1,31 +1,29 @@
 package ru.practicum.request;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import ru.practicum.user.User;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Entity
+@Table(name = "requests")
 @AllArgsConstructor
-@Table(name = "item_requests")
 public class ItemRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotNull
+    @Column(name = "description", nullable = false)
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "requestor_id", nullable = false)
-    private User requestor;
-
-    @CreatedDate
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requester_id")
+    private User requester;
     private LocalDateTime created;
+
+    public ItemRequest() {
+    }
 }
+
+
