@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
-    @ExceptionHandler(Exception.class)
+
+    @ExceptionHandler(GatewayException.class)
     public ResponseEntity<Object> gatewayException(final GatewayException ex) {
         HttpStatusCode status = ex.getStatus();
         HttpHeaders headers = ex.getHeaders();
@@ -36,16 +37,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse internalServerException(final InternalServerException e) {
-        log.error("Ошибка сервера. " + e.getMessage());
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse accessDeniedException(final AccessDeniedException e) {
+        log.error("Доступ заблокирован. " + e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse accessDeniedException(final AccessDeniedException e) {
-        log.error("Доступ заблокирован. " + e.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse internalServerException(final InternalServerException e) {
+        log.error("Ошибка сервера (гейтвей): " + e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
