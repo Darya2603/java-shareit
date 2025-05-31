@@ -15,15 +15,15 @@ import java.util.List;
 public class ItemDto {
     private Long id;
 
-    @NotNull
     @NotBlank
     @Size(max = 255)
     private String name;
 
-    @NotNull
     @NotBlank
     @Size(max = 1000)
     private String description;
+
+    @NotNull
     private Boolean available;
 
     @Positive
